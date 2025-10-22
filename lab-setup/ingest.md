@@ -1,1 +1,2 @@
 - [BLOCKED] No events; check UF -> indexer connectivity, inputs.conf, Win firewall
+- Installed Sysmon with minimal config; enabled UF inputs; verified events in Splunk."
