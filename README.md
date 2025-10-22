@@ -22,3 +22,6 @@ phantom-operator/
 ├── writeups/ # detection notes + real-world TTP mapping
 ├── resume/ # SOC-focused resume + notes
 └── roadmap.md # build plan + milestones
+
+Sysmon installed and Splunk ingest working (see lab-setup/ingest.md)
+Next step: begin TP4 detection suite with Detection #1 (certutil abuse). 
