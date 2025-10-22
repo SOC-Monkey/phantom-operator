@@ -1,0 +1,1 @@
+- [BLOCKED] No events; check UF -> indexer connectivity, inputs.conf, Win firewall
