@@ -1,2 +1,6 @@
 - [BLOCKED] No events; check UF -> indexer connectivity, inputs.conf, Win firewall
 - Installed Sysmon with minimal config; enabled UF inputs; verified events in Splunk."
+✅ Sysmon working end-to-end (EventCode=1 confirmed)
+✅ Splunk UF now running as LocalSystem (fixed permissions issue)
+✅ Non-XML WinEvent ingestion enabled (simpler detection workflow)
+✅ Defender blocked LOLBIN test—documented in Detection 01
