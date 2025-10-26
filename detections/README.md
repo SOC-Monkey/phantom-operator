@@ -1,4 +1,4 @@
-###Detection Index
+### Detection Suite
 
 This folder contains the phantom operator detection suite (10-Rules). 
 
