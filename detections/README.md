@@ -1,4 +1,14 @@
-#Detection Index
+###Detection Index
 
-This folder iwll contain the TP4 Detection Suite (10-rule set).
-Each detection includes SPL, ATT&CK mapping,test steps, FP notes, and response guidance.
+This folder contains the phantom operator detection suite (10-Rules). 
+
+Each detection includes:
+- Purpose
+- Data sources
+- ATT&CK mapping
+- Test cases
+- SPL Detection queries
+- False Positives
+- Mitigations and tuning
+- Response Playbook
+- Additional Notes
