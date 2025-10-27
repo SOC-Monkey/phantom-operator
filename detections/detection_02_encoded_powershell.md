@@ -5,6 +5,12 @@ Detects use of **PowerShell with Base64 encoded commands** (`-EncodedCommand`). 
 
 ---
 
+### ATT&CK Mapping
+
+T1059.001 - Command and Scripting Interpreter: Powershell
+
+--- 
+
 ### Data Source
 | Source | Details |
 |--------|---------|
