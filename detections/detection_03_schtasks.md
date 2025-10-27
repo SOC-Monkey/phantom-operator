@@ -37,6 +37,7 @@ Get-Content C:\Temp\phantom_task.txt
 
 # delete the task (cleanup)
 schtasks /delete /tn "Detection_03_TestTask" /f```
+```
 
 ### SPL Detection Queries
 
@@ -46,10 +47,11 @@ index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCo
 Image="*\\schtasks.exe"
 | table _time host User Image CommandLine ParentImage ProcessGuid
 | sort -_time```
+```
 
 ### Notes
 - This event should only ever occur under a system account or a dedicated service account by an admin user
-- This rule only captures sysmon events, Windows Security can also detect this event under the ID 4698 if security audity is enabled
+- This rule only captures sysmon events, Windows Security can also detect this event under the ID 4698 if security audit is enabled
 - Detection will work even if ExecutionPolicy if modified or bypassed
 - Defender does not block this event
 
@@ -65,7 +67,7 @@ Image="*\\schtasks.exe"
 - Whitelist known automation users/hosts
 - Correlate with asset inventory (i.e Administrative hosts vs user enpoints)
 - Supress tasks created by approved groups using `ParentImage` and `User` fields
-- Add rarity checks (Treat hosts/users who never create tasks and higher priority)
+- Add rarity checks (Treat hosts/users who never create tasks aa higher priority)
 
 # Playbook 
 
@@ -73,12 +75,13 @@ On detection:
 
 1. Look up the `User` and `ParentImage`. If the user is non-admin and the ParentImage is a Living of the Land (LotL) Binary such as explorer.exe or powershell -> Escalate.
 2. Pull the created task's command from the `CommandLine` field
-3. If the task runs a suspicious binary or attempt to contact an external network -> Isolate the host
+3. If the task runs a suspicious binary or attempts to contact an external network -> Isolate the host
 4. Search for related persistence (i.e Other tasks, installs, registry changes, WMI changes, dropped files)
 
 ### Status
 
-- Test plan validated in lab: create -> verify -> delete
-- SPL Detection ready for production
+- ✅ Test case validated
+- ✅ Test Evidence captured
+- ✅ Production ready
  
  
