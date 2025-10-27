@@ -8,6 +8,16 @@ Attackers will commonly created scheduled tasks to execute scripts at specific t
 
 ---
 
+### ATT&CK Mapping
+
+T1053.005 — Scheduled Task/Job: Scheduled Task
+(Creation/use of Windows Scheduled Tasks for persistence.)
+
+T1543.003 — Create or Modify System Process: Windows Service (optional secondary)
+(If detection expands to task → service activity correlation.)
+
+---
+
 ### Data Sources
 
 | Source | Details |
