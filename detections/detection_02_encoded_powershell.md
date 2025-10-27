@@ -85,7 +85,7 @@ On Detection:
 
 ### Status
 
-- ✅ Validated in Splunk
+- ✅ Test validated in Splunk
 - ✅ Test evidence captured
 - ✅ Production ready
 
