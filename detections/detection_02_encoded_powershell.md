@@ -7,7 +7,11 @@ Detects use of **PowerShell with Base64 encoded commands** (`-EncodedCommand`). 
 
 ### ATT&CK Mapping
 
-T1059.001 - Command and Scripting Interpreter: Powershell
+T1059.001 — PowerShell
+(Command and scripting interpreter → PowerShell usage, including -EncodedCommand.)
+
+T1027 — Obfuscated Files or Information
+(Use of Base64/encoding to hide intent / evade inspection.)
 
 --- 
 
