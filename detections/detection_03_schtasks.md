@@ -2,19 +2,15 @@
 
 ### Purpose
 
-Detect creation or execution of scheduled tasks (schtasks.exe) for persistence.
+Detect the creation or execution of scheduled tasks (schtasks.exe) for persistence.
 
-Attackers will commonly created scheduled tasks to execute scripts at specific times to evade detetion or maintain persistence across reboots.
+Attackers that gain elevated access will commonly create scheduled tasks to execute scripts at specific times to evade detetion or maintain persistence across reboots.
 
 ---
 
 ### ATT&CK Mapping
 
-T1053.005 — Scheduled Task/Job: Scheduled Task
-(Creation/use of Windows Scheduled Tasks for persistence.)
-
-T1543.003 — Create or Modify System Process: Windows Service (optional secondary)
-(If detection expands to task → service activity correlation.)
+T1053.005 - Scheduled Task/Job: Scheduled Task
 
 ---
 
@@ -22,48 +18,68 @@ T1543.003 — Create or Modify System Process: Windows Service (optional seconda
 
 | Source | Details |
 |--------|---------|
-| Sysmon | EventCode 1 - Process Create (detect `schtasks.exe` creation and execution |
-| Splunk sourcetype | `WinEventLog:Microsoft-Windows-Sysmon/Operational` |
+| Sysmon | EventCode 1 - Process Create |
 
 ---
 
 ### Test Case
 
-**A. Create a benign scheduled task (create & delete)**
+Create a scheduled task that on execution, drops a text file into the Temp directory.
 
-Run in elevated powershell:
+Expected Result: Task successfully creates a file and the event is logged in Splunk
 
+1. Create a harmless scheduled task that echoes a file every minute
+
+In Elevated powershell:
 ```powershell
-# create a harmless scheduled task that echoes a file every minute
-`schtasks /create /sc minute /mo 1 /tn "PhantomTask" /tr "cmd.exe /c echo PhantomTaskExecuted > C:\Temp\phantom_task_test.txt" /ru SYSTEM`
-#Note: Using SYSTEM avoids the need for credentials and safe in an isolated lab)
 
-# Wait a minute or optionally run it immediately
+`schtasks /create /sc minute /mo 1 /tn "PhantomTask" /tr "cmd.exe /c echo PhantomTaskExecuted > C:\Temp\phantom_task_test.txt" /ru SYSTEM
+```
+
+![Create a harmelss scheduled task](screenshots/d03_img1.png)
+
+2. Wait a minute or optionally run it immediately
+```powershell
 schtasks /run /tn "Detection_03_TestTask"
+```
 
-# Check the file was created
+![Execute the task](screenshots/d03_img2.png)
+
+3. Check the file was created
+```powershell
 Test-Path C:\Temp\phantom_task.txt
 Get-Content C:\Temp\phantom_task.txt
-
-# delete the task (cleanup)
-schtasks /delete /tn "Detection_03_TestTask" /f```
 ```
+
+![Verify the task worked](screenshots/d03_img3.png)
+
+4. Use the production spl rule to verify the event logged into Splunk
+
+![Verify Splunk ingest](screenshots/d03_img4.png)
+
+5. Delete the task (cleanup)
+```powershell
+schtasks /delete /tn "Detection_03_TestTask" /f
+```
+
+![Delete the task](screenshots/d03_img5.png)
 
 ### SPL Detection Queries
 
 **Production Rule**
-```
+```spl
 index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
 Image="*\\schtasks.exe"
 | table _time host User Image CommandLine ParentImage ProcessGuid
-| sort -_time```
+| sort -_time
+| eval detection_id="detection_03"
+| eval detection_name="Scheduled Task Creation/Execution"
+| eval tag="detection"
 ```
 
 ### Notes
 - This event should only ever occur under a system account or a dedicated service account by an admin user
 - This rule only captures sysmon events, Windows Security can also detect this event under the ID 4698 if security audit is enabled
-- Detection will work even if ExecutionPolicy if modified or bypassed
-- Defender does not block this event
 
 ### False Positive Cases
 
@@ -75,13 +91,13 @@ Image="*\\schtasks.exe"
 ### Mitigations and Tuning
 
 - Whitelist known automation users/hosts
-- Correlate with asset inventory (i.e Administrative hosts vs user enpoints)
-- Supress tasks created by approved groups using `ParentImage` and `User` fields
+- Correlate with asset inventory (i.e Administrative hosts vs user endpoints)
+- Suppress tasks created by approved groups using `ParentImage` and `User` fields
 - Add rarity checks (Treat hosts/users who never create tasks aa higher priority)
 
-# Playbook 
+# Quick Playbook 
 
-On detection:
+On Detection:
 
 1. Look up the `User` and `ParentImage`. If the user is non-admin and the ParentImage is a Living of the Land (LotL) Binary such as explorer.exe or powershell -> Escalate.
 2. Pull the created task's command from the `CommandLine` field
