@@ -40,15 +40,15 @@ In Elevated powershell:
 
 2. Wait a minute or optionally run it immediately
 ```powershell
-schtasks /run /tn "Detection_03_TestTask"
+schtasks /run /tn "PhantomTask"
 ```
 
 ![Execute the task](screenshots/d03_img2.png)
 
 3. Check the file was created
 ```powershell
-Test-Path C:\Temp\phantom_task.txt
-Get-Content C:\Temp\phantom_task.txt
+Test-Path C:\Temp\phantom_task_test.txt
+Get-Content C:\Temp\phantom_task_test.txt
 ```
 
 ![Verify the task worked](screenshots/d03_img3.png)
@@ -59,7 +59,7 @@ Get-Content C:\Temp\phantom_task.txt
 
 5. Delete the task (cleanup)
 ```powershell
-schtasks /delete /tn "Detection_03_TestTask" /f
+schtasks /delete /tn "PhantomTask" /f
 ```
 
 ![Delete the task](screenshots/d03_img5.png)
