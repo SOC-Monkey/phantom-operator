@@ -64,6 +64,8 @@ schtasks /delete /tn "PhantomTask" /f
 
 ![Delete the task](screenshots/d03_img5.png)
 
+---
+
 ### SPL Detection Queries
 
 **Production Rule**
@@ -77,9 +79,13 @@ Image="*\\schtasks.exe"
 | eval tag="detection"
 ```
 
+---
+
 ### Notes
 - This event should only ever occur under a system account or a dedicated service account by an admin user
 - This rule only captures sysmon events, Windows Security can also detect this event under the ID 4698 if security audit is enabled
+
+---
 
 ### False Positive Cases
 
@@ -95,6 +101,8 @@ Image="*\\schtasks.exe"
 - Suppress tasks created by approved groups using `ParentImage` and `User` fields
 - Add rarity checks (Treat hosts/users who never create tasks aa higher priority)
 
+---
+
 # Quick Playbook 
 
 On Detection:
@@ -103,6 +111,8 @@ On Detection:
 2. Pull the created task's command from the `CommandLine` field
 3. If the task runs a suspicious binary or attempts to contact an external network -> Isolate the host
 4. Search for related persistence (i.e Other tasks, installs, registry changes, WMI changes, dropped files)
+
+---
 
 ### Status
 
