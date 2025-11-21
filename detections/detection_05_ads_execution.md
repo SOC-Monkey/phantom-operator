@@ -78,9 +78,7 @@ index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCo
 ---
 
 ### Notes
-- Alternate Data Streams are rare in legitmate environments, investigate thuroughly
-- Our execution from an ADS rule only detects powershell execs, other exec paths can be added such as cmd.exe
-
+- Alternate Data Streams are rare in legitmate environments, investigate thoroughly
 ---
 
 ### Flase Positives
