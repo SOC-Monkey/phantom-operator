@@ -1,6 +1,6 @@
 ### Detection 05: Alternate Data Stream Execution
 
-### Puspose 
+### Purpose 
 
 Detect the abuse of NTFS Alternate Data Streams (ADS) to hide and/or execute malicious content
 
@@ -9,7 +9,8 @@ Detect the abuse of NTFS Alternate Data Streams (ADS) to hide and/or execute mal
 ### ATT&CK Mapping
 
 - T1564.004 - Hide Artifacts: NTFS File Attributes
-- T1059 - Command and Scripting Interpreter
+
+---
 
 ### Data Sources
 
@@ -17,26 +18,37 @@ Detect the abuse of NTFS Alternate Data Streams (ADS) to hide and/or execute mal
 |--------|---------|
 | Sysmon/Operational | Event ID 15 & Event ID 1 |
 
+---
+
 ### Test Case
 
 Create an alternate data strean tied to a normal text file which contains a harmless powershell command (calc.exe) then execute it. Verify it shows in Splunk
 
-Expected Result: calc.exe opens on execution, and Splunk detects the ADS creation + execution
+Expected Result: calc.exe opens in background session on execution, and Splunk detects the ADS creation + execution
 
 1. Create a dummy file in cmd.exe
 ```cmd
 echo dummy > C:\Users\Public\normal.txt
 ```
+![Create a dummy file](screenshots/d05_img1.png)
+
 2. Add an alternate data stream to the file with the contents of "Start-Process calc"
 ```cmd
 echo Start-Process calc > C:\Users\Public\normal.txt:hidden.ps1
 ```
+
+![Add alternate data stream to file](screenshots/d05_img2.png)
+
 3. Execute the file with powershell, still in cmd.
 ```cmd
 powershell -WindowStyle Hidden -ExecutionPolicy Bypass - Command "Get-Content -Path C:\Users\Public\normal.txt -Stream hidden.ps1 | Invoke-Expression"
 ```
 
 4. Run the SPL Queries to verify Splunk caught the ADS creation + execution
+
+![Detect ads creation](screenshots/d05_img3.png)
+
+![Detect ads execution](screenshots/d05_img4.png)
 
 ---
 
@@ -47,15 +59,20 @@ powershell -WindowStyle Hidden -ExecutionPolicy Bypass - Command "Get-Content -P
 ```spl
 index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=15
 | table _time, host, Image, TargetFilename, Contents
+| eval detection_id="detection_05"
+| eval detection_name="Alternate Data Stream"
+| eval tag="detection"
 ```
 
 **Production Rule (Execution from ADS)**
 
 ```spl
 index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
-(CommandLine="*powershell* -e*") OR (CommandLine="*powershell* -exec*") OR (CommandLine="*cmd* -e*") OR (CommandLine="*cmd* -exec*") 
-| where match(CommandLine, ":[a-zA-Z0-9]+")
+(CommandLine="*powershell* -e*") OR (CommandLine="*powershell* -exec*") OR (CommandLine="*cmd* -e*") OR (CommandLine="*cmd* -exec*")
 | table _time, user, host, Image, ParentImage, CommandLine
+| eval detection_id="detection_05"
+| eval detection_name="Alternate Data Stream"
+| eval tag="detection"
 ```
 
 ---
@@ -64,13 +81,20 @@ index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCo
 - Alternate Data Streams are rare in legitmate environments, investigate thuroughly
 - Our execution from an ADS rule only detects powershell execs, other exec paths can be added such as cmd.exe
 
+---
 
-### Flase Positives and Tuning
+### Flase Positives
 - Testers or forensic analysts may set up alternate data streams as part of a legit workflow
-- Some installers may write an ads in %ProgramData%. Whitelist these installers if trusted
-- Can limit detections to only risky parent processes i.e powershel/cmd
+- Some installers may write an ads in %ProgramData%.
 
-### Playbook
+### Tuning
+- Work with testers/analysts to whitelist legitmate streams
+- Whitelist trusted installers that write ads'
+- Refine rule by analysing parent processes
+
+---
+
+### Quick Playbook
 
 1. Pull the ParentImage to see where the stream creation happened
 2. Use ProcessGuid to try link to a ProcessCreate event
@@ -84,7 +108,9 @@ index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCo
 - Lateral movement detected
 - An admin/system user is unexpectedly running these commands.
 
-Status:
-- Test Verified
-- SPL Detection Verified
-- Ready for Production
+---
+
+### Status:
+- ✅ Test case validated
+- ✅ Test Evidence captured
+- ✅ Production ready

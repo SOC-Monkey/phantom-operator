@@ -71,8 +71,8 @@ index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCo
 | where NOT (Details LIKE "%Program Files%" OR Details LIKE "%Windows%")
 | table _time host User TargetObject TaskCategory Details ProcessId ProcessGuid
 | sort -_time
-| eval detection_id="detection_09"
-| eval detection_name="DLL Search Order Hijacking"
+| eval detection_id="detection_04"
+| eval detection_name="Registry Run Keys"
 | eval tag="detection"
 ```
 
