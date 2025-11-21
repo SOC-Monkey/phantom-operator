@@ -6,9 +6,13 @@ Detect the creation/modification of WMI event subcriptions (EventFilter, EventCo
 
 Wmi persistence is often used by attackers because it runs automatically when triggered by a system event, and the resulting action can execute with SYSTEM level privileges.
 
+---
+
 ### ATT&CK Mapping
 
 - T1546.003 - Event Triggered Execution: Windows Management Instrumentation Event Subscription
+
+---
 
 ### Data Sources
 
@@ -16,6 +20,7 @@ Wmi persistence is often used by attackers because it runs automatically when tr
 |--------|---------|
 | Sysmon  | Event ID 19, 20, 21 |
 
+---
 
 ### Test Case
 
@@ -160,7 +165,7 @@ Elevate when:
 
 ---
 
-Status:
+### Status:
 - ✅ Test case validated
 - ✅ Test Evidence captured
 - ✅ Production ready
