@@ -6,11 +6,15 @@ Detect the creation of local user accounts or the addition of users to privilege
 
 Once attackers gain access to an admin account, they can create additional admin accounts to maintain persistence.
 
+---
+
 ### ATT&CK Mapping
 
 T1136.001 - Create Account: Local Account
 
 T1098 - Account Manipulation
+
+---
 
 ### Data Sources
 
@@ -18,9 +22,11 @@ T1098 - Account Manipulation
 |--------|---------|
 | WinEventLog:Security | EventCode: 4720, 4728, 4732, 4756 |
 
+---
+
 ### Test Case
 
-Create a local account, add it the administrators groups, then remove the account.
+Create a local account, add it to the administrators group, then remove the account.
 
 Expected result: Production rule catches account creation, and the hunting companion catches the addition to the administrators group.
 
@@ -31,28 +37,43 @@ Expected result: Production rule catches account creation, and the hunting compa
 net user harmless /add
 ```
 
+![local account created](screenshots/d08_img1.png)
+
 2. Then add it to Administrators:
 ```powershell
 net localgroup administrators harmless /add
 ```
 
+![local account elevated to admin](screenshots/d08_img2.png)
+
 3. Use the Production query to check account creation was detected
+
+![Account creation detected in splunk](screenshots/d08_img3.png)
 
 4. Use the hunter companion to check privilege escalation was detected
 
-5. You can remove it afterward with:
+![Account privilege escalation detected in splunk](screenshots/d08_img4.png)
+
+5. Remove the account (Cleanup):
 ```powershell
 net user harmless /delete
 ```
+
+![local account deleted](screenshots/d08_img5.png)
+
+---
 
 ### SPL Detection Queries
 
 **Production Rule**
 
 ```spl
-index=main EventCode=4720
-| table _time, host, Message, Account_Name
-| rename Account_Name AS CreatedBy/CreatedAccount
+index=main EventCode IN (4728,4732,4756)
+| where like(Message,"%Administrators%")
+| table _time, host, EventCode, Message
+| eval detection_id="detection_08"
+| eval detection_name="User Account Creation"
+| eval tag="detection"
 ```
 
 **Hunter Companion (Detect Privilege escalation)**
@@ -61,10 +82,15 @@ index=main EventCode=4720
 index=main EventCode IN (4728,4732,4756)
 | where like(Message,"%Administrators%")
 | table _time, host, EventCode, Message
+| eval detection_id="detection_08"
+| eval detection_name="User Account Elevation"
+| eval tag="detection"
 ```
 
+---
+
 ### Notes
-- This detection will pick up a lot of legitimate activity due to it only being possible to create user accounts from a privileged user.
+- This detection uses Wndows:Security instead of sysmon, so the relevant information isn't as neatly parsed
 
 ### False Positives
 - Standard Admin activity
@@ -72,7 +98,6 @@ index=main EventCode IN (4728,4732,4756)
 
 ### Tuning 
 - Add trusted installers and software to a whitelist
-- Can whitelist trusted admins at the risk of missing a compromised admin account
 - Consider filtering trusted admin activity by time/location i.e If outside work hours -> flag suspicious
 
 ### Quick Playbook
@@ -86,8 +111,8 @@ index=main EventCode IN (4728,4732,4756)
 - Source process is malicious
 
 ### Status:
+- ✅ Test case validated
+- ✅ Test Evidence captured
+- ✅ Production ready
 
-- Test verified
-- Ingest verified
-- Production Ready
 
