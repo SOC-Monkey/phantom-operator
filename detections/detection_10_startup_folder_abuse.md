@@ -7,15 +7,21 @@ Detect the use creation of a startup file for the use of persistence.
 Attackers can maintain presence on a system by placing an executable, shortcut, or script inside the user or system's Startup folder.
 Any file in this directory is executed upon login
 
+---
+
 ### ATT&CK Mapping
 
 T1574.001 - Boot or Logon Autostart Execution: Startup Folder
+
+---
 
 ### Data Sources
 
 | Source | Details |
 |--------|---------|
-| Sysmon | EventCode: 11 |
+| Sysmon | EventCode - 11 |
+
+---
 
 ### Test Case
 
@@ -31,7 +37,13 @@ Expected Result: loader.exe should run on startup and Splunk should detect the c
 copy <YourPathtoloader.exe> "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\loader.exe"
 ```
 
+![loader.exe moved into startup folder](screenshots/d10_img1.png)
+
 3. Use the spl detection query to verify the file move was logged
+
+![Detection verified in Splunk](screenshots/d10_img2.png)
+
+---
 
 ### SPL Detection Queries
 
@@ -44,8 +56,12 @@ index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCo
 | table _time host User Image TargetFilename ProcessId ProcessGuid
 ```
 
+---
+
 ### Notes
 - Some applications will write to the startup folder, the production rule excludes a few by default
+
+---
 
 ### False Positives
 - Legitimate installers
@@ -53,6 +69,8 @@ index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCo
 
 ### Tuning 
 - Whitelist trusted vendors by Image
+
+---
 
 ### Quick Playbook
 1. Identify the file creator and time of creation
@@ -65,9 +83,10 @@ index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCo
 - The file is malicious
 - The parent process that created the file is untrusted or suspicious
 
-### Status:
+---
 
-- Test case verified
-- Detection verified
-- Production Ready
+### Status:
+- ✅ Test case validated
+- ✅ Test Evidence captured
+- ✅ Production ready
 
