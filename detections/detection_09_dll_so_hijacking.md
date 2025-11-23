@@ -8,15 +8,21 @@ Attackers can cause legitmate executables to load an unexpected DLL (Dynamic Lin
 
 Windows has a specific sequence of searches for dlls to load when an applicaiton calls for one. Attackers exploit this by placing a malicious dll early in this sequence i.e Hijacking the search order.
 
+---
+
 ### ATT&CK Mapping
 
 T1574.001 - Hijack Execution Flow: DLL
+
+---
 
 ### Data Sources
 
 | Source | Details |
 |--------|---------|
-| Sysmon | EventCode: 7 |
+| Sysmon | EventCode - 7 |
+
+---
 
 ### Test Case
 
@@ -73,7 +79,9 @@ cl loader.c
 
 5. Copy the compiled dll and executable onto your target machine. Ensure they are in the same folder
 
-6. Run the executable
+![executable and dll copied onto target machine](screenshots/d09_img1.png)
+
+6. Run the executable (cmd should run and close after a second)
 
 7. Verify the dll loaded (You should see "DLL loaded by PID=")
 
@@ -81,7 +89,12 @@ cl loader.c
 type $env:TEMP\dll_test_log.txt
 ```
 
+![dll verified to have ran](screenshots/d09_img2.png)
+
 8. Verify splunk logged the event using the Production rule
+
+![Event verified in Splunk](screenshots/d09_img3.png)
+---
 
 ### SPL Detection Queries
 
@@ -97,10 +110,14 @@ index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCo
 | sort -_time
 ```
 
+---
+
 ### Notes
 - This detection will still pick up a lot legitmate dll loading from \AppData\
 - Consider whitelisting legimate paths on an ongoing basis
 - Do not blanket whitelist noisy non-privileged directories, these are favored by attackers
+
+---
 
 ### False Positives
 - Legitmate dll loading by the system/applications
@@ -109,6 +126,8 @@ index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCo
 ### Tuning 
 - Filter out privileged paths
 - Whitelist legitmate dlls on ongoing basis
+
+---
 
 ### Quick Playbook
 1. Pull the Image, and ImageLoaded fields
@@ -123,9 +142,11 @@ index=main sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCo
 - Host needs isolation for any of the above reasons
 - dll is confirmed malicious
 
-### Status:
+---
 
-- Test case verified
-- Detection verified
-- Production Ready
+### Status:
+- ✅ Test case validated
+- ✅ Test Evidence captured
+- ✅ Production ready
+
 
