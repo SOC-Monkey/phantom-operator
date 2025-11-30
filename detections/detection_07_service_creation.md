@@ -2,7 +2,9 @@
 
 ### Purpose
 
-Attackers use Windows Service to maintain persistence becuase service accounts often use static credentials that rarely change, and run with high level privileges
+Detect the creation of Windows Services.
+
+Attackers use Windows Services to maintain persistence becuase service accounts often use static credentials that rarely change, and run with high level privileges
 
 ---
 
@@ -50,6 +52,8 @@ sc.exe delete HarmlessService
 ```
 
 ![Service deleted](screenshots/d07_img4.png)
+
+---
 
 ### SPL Detection Queries
 

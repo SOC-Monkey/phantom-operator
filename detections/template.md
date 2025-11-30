@@ -1,8 +1,41 @@
-# <Detection Name> (TP4)
-**Intent:**  
-**Data Sources:**  
-**ATT&CK:**  
-**SPL:**  
-**Test Procedure:**  
-**False Positives:**  
-**Response:**  
+# Detection
+
+### Purpose
+
+---
+
+### ATT&CK Mapping
+
+---
+
+### Data Sources
+
+---
+
+### Test Case
+
+---
+
+### SPL Detection Queries
+
+**Production Rule**
+
+---
+
+### Notes
+
+---
+
+### False Positives
+
+
+
+### Tuning
+
+---
+
+### Quick Playbook
+
+---
+
+### Status:
